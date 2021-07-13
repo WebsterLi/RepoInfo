@@ -6,6 +6,7 @@ import(
 	"net/http"
 	"fmt"
 	"bytes"
+	"time"
 	"log"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/jessevdk/go-flags"
@@ -13,7 +14,7 @@ import(
 )
 
 var (
-	fork, steal, count, repo, max int
+	fork, steal, near_steal, count, repo, max int
 	m map[string]int = map[string]int{"": 0,}
 	author string
 	opts struct {
@@ -64,7 +65,18 @@ func ParseAuthorInfo(){
 				codetype, _ := jsonparser.GetString(body,fmt.Sprintf("[%d]",i),"language")
 				if isfork {
 					fork++
+					stdt := "2006-01-02T15:04:05Z"//format standard time(Can't be changed)
+                                        t1, err1 := time.Parse(stdt, ctime)
+                                        t2, err2 := time.Parse(stdt, utime)
+
+                                        if err1 != nil || err2 != nil {
+                                                fmt.Println(err1,err2)
+                                        }
+
+                                        diff := t2.Sub(t1)
+					mins := int(diff.Minutes())
 					if ctime == utime {steal++}
+					if mins <= 60 {near_steal++}
 				}else{
 					m[codetype]++
 				}
@@ -77,7 +89,8 @@ func ParseAuthorInfo(){
 func PrintInfo(){
 	fmt.Println("Total repo from",author,":",count)
 	fmt.Println("|____Fork repo:", fork)
-	fmt.Println("|    |____Non modified fork:", steal)
+	fmt.Println("|    |____Non modified fork repo:", steal)
+	fmt.Println("|    |____Nearly non modified fork repo:", near_steal - steal)
 	fmt.Println("|____Non fork repo:", count - fork)
 	fmt.Println("     |____Noncode repo:",m[""])
 	for key, value := range m{
