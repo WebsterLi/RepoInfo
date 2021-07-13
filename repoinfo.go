@@ -96,8 +96,7 @@ func main() {
 	if opts.Single != "" {
 		IsForkRepo(opts.Single)
 	} else if opts.Author != "" && opts.Repo != 0 {
-		author = opts.Author
-		repo = opts.Repo
+		author, repo = opts.Author, opts.Repo
 		max = repo/100 + 1
 		ParseAuthorInfo()
 		PrintInfo()
