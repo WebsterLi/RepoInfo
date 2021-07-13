@@ -90,6 +90,7 @@ func PrintInfo(){
 	fmt.Println("Total repo from",author,":",count)
 	fmt.Println("|____Fork repo:", fork)
 	fmt.Println("|    |____Non modified fork:", steal)
+	fmt.Println("|    |____Nearly non modified fork:", near_steal)
 	fmt.Println("|____Non fork repo:", count - fork)
 	fmt.Println("     |____Noncode repo:",m[""])
 	for key, value := range m{
